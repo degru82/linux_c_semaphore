@@ -9,7 +9,7 @@
 int main (void) {
     const char *filename = "number.txt" ;
     pid_t pid[2] = {0};
-    sem_t sem;
+    sem_t *sem;
 
     // sem_init (sem, 0, 1); // This is for Linux Systems
     sem = sem_open ("/semaphore", O_CREAT, 0644, 1); // This is for OS X systems
@@ -32,6 +32,7 @@ int main (void) {
 
             fp = fopen (filename, "r");
             parsed = atoi (fgets (buf, 10, fp));
+            fsync(fileno(fp));
             fclose (fp);
 
             parsed ++;
@@ -41,6 +42,7 @@ int main (void) {
 
             fp = fopen (filename, "w");
             fprintf (fp, "%d", parsed);
+            fsync(fileno(fp));
             fclose (fp);
 
             sem_post (sem);
